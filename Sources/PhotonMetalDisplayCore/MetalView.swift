@@ -133,6 +133,8 @@ private class CustomMTKView: MTKView {
         case .sdr:
             setupLayerDynamicRange(range: .sdr)
         }
+#else
+        setupLayerDynamicRange(range: self.prefersDynamicRange)
 #endif
     }
     

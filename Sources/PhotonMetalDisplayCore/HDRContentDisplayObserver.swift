@@ -5,6 +5,8 @@
 //  Created by JuniperPhoton on 2024/11/21.
 //
 import Foundation
+
+#if canImport(UIKit)
 import UIKit
 
 /// An observer to detech whether to disable HDR display or not.
@@ -57,3 +59,4 @@ public class HDRContentDisplayObserver {
         displayModeChanged(maximumDynamicRange)
     }
 }
+#endif

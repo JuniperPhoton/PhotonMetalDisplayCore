@@ -101,18 +101,23 @@ private class CustomMTKView: MTKView {
     /// The preferred dynamic range for the view.
     var prefersDynamicRange: MetalDynamicRange = .sdr
     
+#if canImport(UIKit)
     private var observer: HDRContentDisplayObserver!
+#endif
+    
     private var currentBounds: CGRect = .zero
     
     override init(frame frameRect: CGRect, device: (any MTLDevice)?) {
         super.init(frame: frameRect, device: device)
         
+#if canImport(UIKit)
         observer = HDRContentDisplayObserver { [weak self] range in
             guard let self else { return }
             if #available(iOS 16.0, *) {
                 setupLayerDynamicRange()
             }
         }
+#endif
     }
     
     required init(coder: NSCoder) {
@@ -121,12 +126,14 @@ private class CustomMTKView: MTKView {
     
     @available(iOS 16.0, *)
     func setupLayerDynamicRange() {
+#if canImport(UIKit)
         switch observer.maximumDynamicRange {
         case .hdr:
             setupLayerDynamicRange(range: self.prefersDynamicRange)
         case .sdr:
             setupLayerDynamicRange(range: .sdr)
         }
+#endif
     }
     
     @available(iOS 16.0, *)

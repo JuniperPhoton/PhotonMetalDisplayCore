@@ -12,8 +12,19 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
+            name: "PhotonMetalDisplayCoreStatic",
+            type: .static,
+            targets: ["PhotonMetalDisplayCore"]
+        ),
+        .library(
+            name: "PhotonMetalDisplayCoreDynamic",
+            type: .dynamic,
+            targets: ["PhotonMetalDisplayCore"]
+        ),
+        .library(
             name: "PhotonMetalDisplayCore",
-            targets: ["PhotonMetalDisplayCore"]),
+            targets: ["PhotonMetalDisplayCore"]
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

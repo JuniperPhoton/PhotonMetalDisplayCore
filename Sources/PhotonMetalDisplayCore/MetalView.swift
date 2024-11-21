@@ -42,10 +42,12 @@ public struct MetalView: ViewRepresentable {
     ///
     /// - parameter renderer: The ``MetalRenderer`` to use for drawing.
     /// - parameter renderMode: The ``MetalRenderMode`` for the view.
-    /// - parameter isOpaque: Whether the view is opaque.
+    /// - parameter isOpaque: Whether the view is opaque. The default value is true.
     /// - parameter prefersDynamicRange: The preferred dynamic range for the view.
+    /// The default value is ``MetalDynamicRange/sdr``.
     ///
     /// Note: this view can only response to the ``prefersDynamicRange`` changes.
+    /// ``renderer``, ``renderMode`` and ``isOpaque`` must be confirmed when initializing this view.
     public init(
         renderer: MetalRenderer,
         renderMode: MetalRenderMode,

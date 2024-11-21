@@ -1,6 +1,6 @@
 # Use MetalView and MetalRenderer to render a CIImage
 
-``MetalView`` is a wrapper of MTKView, which provides a simple way to render Metal content in SwiftUI.
+MetalView is a wrapper of MTKView, which provides a simple way to render Metal content in SwiftUI.
 
 To construct a ``MetalView``, you need to provide a ``MetalRenderer`` object, which provides the CIImage to render.
 
@@ -29,4 +29,8 @@ There are two modes available:
 
 If you set the render mode to ``MetalRenderMode/renderWhenDirty``, you can call the ``MetalRenderer/requestChanged(displayedImage:)`` method to update the image.
 
-And that's it! You can now construct a CIImage and set it to the renderer via ``MetalRenderer/requestChanged(displayedImage:)`` to render the content.
+And that's it! You can now construct a `CIImage` and set it to the renderer via ``MetalRenderer/requestChanged(displayedImage:)`` to render the content.
+
+## Update image
+
+When the underlying `CIImage` is changed, you must call ``MetalRenderer/requestChanged(displayedImage:)`` to update the image.

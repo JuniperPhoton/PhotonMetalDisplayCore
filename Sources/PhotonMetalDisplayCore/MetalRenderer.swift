@@ -15,6 +15,19 @@ private let maxBuffersInFlight = 3
 /// A renderer that renders a CIImage to a ``MetalView``.
 ///
 /// You must call ``initializeCIContext(colorSpace:name:queue:)`` before using this renderer.
+///
+/// > Note: ``initializeCIContext(colorSpace:name:queue:)`` may takes time, and you can call it off the main thread.
+///
+/// ## Rendering
+///
+/// You use ``requestChanged(displayedImage:)`` to update the image to be drawn.
+///
+/// If images with different aspect ratios will be drawn, you should call the ``requestClearDestination(clearDestination:)`` passing true,
+/// which will clear the previous rendering destination before rendering the new image.
+///
+/// ## Background
+///
+/// You can use ``setBackgroundColor(ciColor:)`` or ``setBackgroundImage(_:)`` to set the background color or image.
 public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     /// Get the last requested time to display the image.
     /// When rendering in ``MetalRenderMode/renderWhenDirty``, you can use this to decide when to update the image.

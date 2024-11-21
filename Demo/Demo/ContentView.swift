@@ -53,6 +53,7 @@ struct ContentView: View {
                 MetalView(
                     renderer: viewModel.renderer,
                     renderMode: .renderWhenDirty,
+                    isOpaque: false,
                     prefersDynamicRange: viewModel.showHDR ? .hdr : .sdr
                 )
             }.toolbar {

@@ -1,6 +1,6 @@
 # Enable HDR Rendering
 
-``MetalView`` also supports rendering in HDR mode.
+MetalView also supports rendering in HDR mode.
 
 ## Enable MetalView HDR Rendering
 

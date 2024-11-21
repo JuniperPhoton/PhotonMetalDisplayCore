@@ -2,11 +2,15 @@
 
 A simple Swift Package to help you render CIImage from Core Image in a MTKView in SwiftUI, supporting some other features like HDR rendering.
 
+@Metadata {
+    @PageImage(purpose: icon, source: "metal-icon")
+}
+
 ## Installation
 
 ### For App
 
-In Xcode, navigate to the root Project settings > `Package Dependencies` and add the following URL of this repository:
+In Xcode, navigate to the root `Project settings` > `Package Dependencies` and add the following URL of this repository:
 
 ```
 https://github.com/JuniperPhoton/PhotonMetalDisplayCore
@@ -14,7 +18,7 @@ https://github.com/JuniperPhoton/PhotonMetalDisplayCore
 
 ### For Swift Package
 
-Add the following line to the dependencies in your Package.swift file:
+Add the following line to the dependencies in your `Package.swift` file:
 
 ```swift
 dependencies: [
@@ -22,16 +26,20 @@ dependencies: [
 ],
 ```
 
+## Essentials
+
+@Links(visualStyle: list) {
+    - <doc:RenderEssential>
+    - <doc:EnableHDRRender>
+}
+
 ## Sample Project
+
+![Sample Project Preview](demo-intro)
 
 You can navigate to the `./Demo` folder to see the sample project.
 
 ## Topics
-
-### Essential
-
-- <doc:RenderEssential>
-- <doc:EnableHDRRender>
 
 ### Rendering
 

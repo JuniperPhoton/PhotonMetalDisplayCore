@@ -22,7 +22,7 @@ swift package --allow-writing-to-directory ./docs \
 ### Using Xcode build
 
 ```
-xcodebuild docbuild -scheme PhotonMetalDisplayCore -derivedDataPath ~/Desktop/PhotonMetalDisplayCore -destination 'generic/platform=iOS' DOCC_HOSTING_BASE_PATH='PhotonMetalDisplayCore'
+xcodebuild docbuild -scheme PhotonMetalDisplayCore -derivedDataPath ./.build/derived-data -destination 'generic/platform=iOS' DOCC_HOSTING_BASE_PATH='PhotonMetalDisplayCore'
 ```
 
 Then find the docarchived:

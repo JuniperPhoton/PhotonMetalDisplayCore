@@ -7,9 +7,6 @@
             "documentation-intro-title": "#ffffff",
             "documentation-intro-accent": "#ffffff",
             "documentation-intro-figure": "#ffffff"
-        },
-        "typography": {
-            "html-font": "\"SF Pro\""
         }
     }
 }

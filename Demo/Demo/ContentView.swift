@@ -58,7 +58,11 @@ struct ContentView: View {
                 )
             }.toolbar {
                 Toggle("Show HDR", isOn: $viewModel.showHDR)
+#if os(macOS)
                     .toggleStyle(.checkbox)
+#else
+                    .toggleStyle(.switch)
+#endif
             }.task(id: viewModel.showHDR) {
                 await viewModel.loadBuiltInImage()
             }

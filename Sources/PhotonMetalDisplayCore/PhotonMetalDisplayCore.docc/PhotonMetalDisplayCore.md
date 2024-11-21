@@ -31,13 +31,8 @@ dependencies: [
 @Links(visualStyle: list) {
     - <doc:RenderEssential>
     - <doc:EnableHDRRender>
+    - <doc:SampleCode>
 }
-
-## Sample Project
-
-![Sample Project Preview](demo-intro)
-
-You can navigate to the `./Demo` folder to see the sample project.
 
 ## Topics
 

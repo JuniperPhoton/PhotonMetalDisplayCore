@@ -46,7 +46,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     }
     
     /// The the background color to be composited over with.
-    /// If the color is not opaque, please remember to set ``isOpaque`` in ``MetalView``.
+    /// If the color is not opaque, please remember to set ``MetalView/isOpaque`` in ``MetalView``.
     public func setBackgroundColor(ciColor: CIColor) {
         setBackgroundImage(CIImage(color: ciColor))
     }
@@ -60,7 +60,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         self.scaleToFill = scaleToFill
     }
     
-    /// Initialize the CIContext with a specified working ``CGColorSpace``.
+    /// Initialize the CIContext with a specified working `CGColorSpace`.
     /// - parameter colorSpace: The working Color Space to use.
     /// - parameter queue: A dedicated queue to start the render task. Although the whole render process is run by GPU,
     /// however creating and submitting textures to GPU will introduce performance overhead, and it's recommended not to do it on main thread.

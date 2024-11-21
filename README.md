@@ -6,7 +6,7 @@ The generated documentation can be accessed via:
 
 https://juniperphoton.github.io/PhotonMetalDisplayCore/documentation/photonmetaldisplaycore
 
-## Update the Swift Docc
+## Generate the Swift DocC
 
 ```
 swift package --allow-writing-to-directory ./docs \
@@ -15,4 +15,10 @@ swift package --allow-writing-to-directory ./docs \
     --transform-for-static-hosting \
     --hosting-base-path PhotonMetalDisplayCore \
     --output-path './docs'
+```
+
+## Preview the documentation locally
+
+```
+swift package --disable-sandbox preview-documentation --target PhotonMediaDisplayCore
 ```

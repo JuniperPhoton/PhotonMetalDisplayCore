@@ -8,6 +8,8 @@ https://juniperphoton.github.io/PhotonMetalDisplayCore/documentation/photonmetal
 
 ## Generate the Swift DocC
 
+### Using Swift DocC plugin:
+
 ```
 swift package --allow-writing-to-directory ./docs \
     generate-documentation --target PhotonMetalDisplayCore \
@@ -15,6 +17,12 @@ swift package --allow-writing-to-directory ./docs \
     --transform-for-static-hosting \
     --hosting-base-path PhotonMetalDisplayCore \
     --output-path './docs'
+```
+
+### Using Xcode build
+
+```
+xcodebuild docbuild -scheme PhotonMetalDisplayCore -derivedDataPath ~/Desktop/PhotonMetalDisplayCore -destination 'generic/platform=iOS' DOCC_HOSTING_BASE_PATH='PhotonMetalDisplayCore'
 ```
 
 ## Preview the documentation locally

@@ -1,5 +1,9 @@
 # Enable HDR Rendering
 
+@Metadata {
+    @PageImage(purpose: icon, source: "text.document")
+}
+
 MetalView also supports rendering in HDR mode.
 
 ## Enable MetalView HDR Rendering

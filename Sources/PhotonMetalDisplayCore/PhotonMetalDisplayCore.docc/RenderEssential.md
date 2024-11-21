@@ -1,5 +1,9 @@
 # Use MetalView and MetalRenderer to render a CIImage
 
+@Metadata {
+    @PageImage(purpose: icon, source: "text.document")
+}
+
 MetalView is a wrapper of MTKView, which provides a simple way to render Metal content in SwiftUI.
 
 To construct a ``MetalView``, you need to provide a ``MetalRenderer`` object, which provides the CIImage to render.

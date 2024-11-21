@@ -26,15 +26,15 @@ dependencies: [
 ],
 ```
 
-## Essentials
+## Topics
+
+### Essentials
 
 @Links(visualStyle: list) {
     - <doc:RenderEssential>
     - <doc:EnableHDRRender>
     - <doc:SampleCode>
 }
-
-## Topics
 
 ### Rendering
 

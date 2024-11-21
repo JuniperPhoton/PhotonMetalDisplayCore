@@ -25,6 +25,14 @@ swift package --allow-writing-to-directory ./docs \
 xcodebuild docbuild -scheme PhotonMetalDisplayCore -derivedDataPath ~/Desktop/PhotonMetalDisplayCore -destination 'generic/platform=iOS' DOCC_HOSTING_BASE_PATH='PhotonMetalDisplayCore'
 ```
 
+Then find the docarchived:
+
+```
+find './.build/derived-data' -type d -name '*.doccarchive'
+```
+
+Copy the *.doccarchive to the root dir and change its name to `docs` (Configure the page settings in the repo settings first).
+
 ## Preview the documentation locally
 
 ```

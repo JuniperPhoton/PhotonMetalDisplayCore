@@ -1,7 +1,15 @@
 {
-  "theme": {
-    "color": {
-      "documentation-intro-fill": "rebeccapurple"
+    "theme": {
+        "color": {
+            "link": "#2a52c4",
+            "documentation-intro-eyebrow": "#ffffff",
+            "documentation-intro-fill": "linear-gradient(30deg, #4067d3, #d74a43)",
+            "documentation-intro-title": "#ffffff",
+            "documentation-intro-accent": "#ffffff",
+            "documentation-intro-figure": "#ffffff"
+        },
+        "typography": {
+            "html-font": "\"SF Pro\""
+        }
     }
-  }
 }

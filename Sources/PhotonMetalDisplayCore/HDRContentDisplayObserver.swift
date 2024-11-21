@@ -8,8 +8,10 @@ import Foundation
 
 #if canImport(UIKit)
 import UIKit
+#endif
 
-/// An observer to detech whether to disable HDR display or not.
+/// An observer to detech whether to disable HDR display or not in iOS.
+///
 /// When the app is in inactive or in background, the observer will change the maximum dynamic range to SDR.
 ///
 /// You can either observe in the closure passed in the initializer or by checking the `maximumDynamicRange` property.
@@ -26,7 +28,8 @@ import UIKit
 /// }
 /// ```
 /// To get the current maximum dynamic range, you can access the ``maximumDynamicRange`` property.
-@available(iOS 15.0, *)
+///
+/// > Note: On macOS, this class won’t perform any actions because its lifecycle differs from iOS.
 public class HDRContentDisplayObserver {
     private var displayModeChanged: (MetalDynamicRange) -> Void
     
@@ -39,9 +42,12 @@ public class HDRContentDisplayObserver {
     /// The parameter indicates the supported maximum dynamic range.
     public init(displayModeChanged: @escaping (MetalDynamicRange) -> Void) {
         self.displayModeChanged = displayModeChanged
+#if canImport(UIKit)
         setupObserver()
+#endif
     }
     
+#if canImport(UIKit)
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -71,5 +77,5 @@ public class HDRContentDisplayObserver {
         maximumDynamicRange = .hdr
         displayModeChanged(maximumDynamicRange)
     }
-}
 #endif
+}

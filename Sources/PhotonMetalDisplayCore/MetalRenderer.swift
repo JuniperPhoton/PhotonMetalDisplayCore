@@ -23,7 +23,6 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     private let commandQueue: MTLCommandQueue
     private var ciContext: CIContext? = nil
     private var opaqueBackground: CIImage
-    private let startTime: CFAbsoluteTime
     
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     private(set) var scaleToFill: Bool = false
@@ -34,14 +33,9 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     private var clearDestination: Bool = false
     
     public override init() {
-        let start = CFAbsoluteTimeGetCurrent()
         self.device = MTLCreateSystemDefaultDevice()!
         self.commandQueue = self.device.makeCommandQueue()!
         self.opaqueBackground = CIImage.black
-        
-        self.startTime = CFAbsoluteTimeGetCurrent()
-        
-        debugPrint("MetalRenderer init \(CFAbsoluteTimeGetCurrent() - start)s")
         super.init()
     }
     
@@ -62,6 +56,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     
     /// Initialize the CIContext with a specified working `CGColorSpace`.
     /// - parameter colorSpace: The working Color Space to use.
+    /// - parameter name: The name of the CIContext. This is used for debugging purposes.
     /// - parameter queue: A dedicated queue to start the render task. Although the whole render process is run by GPU,
     /// however creating and submitting textures to GPU will introduce performance overhead, and it's recommended not to do it on main thread.
     public func initializeCIContext(

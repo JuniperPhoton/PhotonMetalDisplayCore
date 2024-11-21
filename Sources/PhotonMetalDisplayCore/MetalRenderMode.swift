@@ -10,5 +10,7 @@ public enum MetalRenderMode {
     case continuous(fps: Int = 30)
     
     /// Render only when the view is dirty.
+    ///
+    /// When in this mode, you must call ``MetalRenderer/requestChanged(displayedImage:)`` to trigger a redraw.
     case renderWhenDirty
 }

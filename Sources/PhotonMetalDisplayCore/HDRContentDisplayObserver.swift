@@ -13,6 +13,19 @@ import UIKit
 /// When the app is in inactive or in background, the observer will change the maximum dynamic range to SDR.
 ///
 /// You can either observe in the closure passed in the initializer or by checking the `maximumDynamicRange` property.
+///
+/// ```swift
+/// // Define this variable in the class scope.
+/// private var observer: HDRContentDisplayObserver!
+///
+/// // Construct the observer and keep strong reference to it.
+/// observer = HDRContentDisplayObserver { [weak self] range in
+///     guard let self else { return }
+///
+///     // If the range is .sdr, then you need to set the dynamic range to SDR accordingly.
+/// }
+/// ```
+/// To get the current maximum dynamic range, you can access the ``maximumDynamicRange`` property.
 @available(iOS 15.0, *)
 public class HDRContentDisplayObserver {
     private var displayModeChanged: (MetalDynamicRange) -> Void

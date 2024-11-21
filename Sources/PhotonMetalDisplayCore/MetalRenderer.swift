@@ -16,9 +16,11 @@ private let maxBuffersInFlight = 3
 ///
 /// You must call ``initializeCIContext(colorSpace:name:queue:)`` before using this renderer.
 public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
+    /// Get the last requested time to display the image.
+    /// When rendering in ``MetalRenderMode/renderWhenDirty``, you can use this to decide when to update the image.
     @Published private(set) var requestedDisplayedTime = CFAbsoluteTimeGetCurrent()
     
-    public let device: MTLDevice
+    let device: MTLDevice
     
     private let commandQueue: MTLCommandQueue
     private var ciContext: CIContext? = nil
@@ -50,6 +52,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         self.opaqueBackground = image
     }
     
+    /// Set whether to scale to fill the content.
     public func setScaleToFill(scaleToFill: Bool) {
         self.scaleToFill = scaleToFill
     }
@@ -91,6 +94,9 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     }
     
     /// Request update the image.
+    ///
+    /// The image will be rendered in the next frame.
+    ///
     /// - parameter displayedImage: The CIImage to be rendered.
     public func requestChanged(displayedImage: CIImage?) {
         self.displayedImage = displayedImage

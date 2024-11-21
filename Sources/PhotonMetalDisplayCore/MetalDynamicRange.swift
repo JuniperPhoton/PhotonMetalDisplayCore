@@ -6,7 +6,7 @@
 //
 import Foundation
 
-/// The dynamic range supported by Metal.
+/// The dynamic range supported by ``MetalView``
 public enum MetalDynamicRange {
     case sdr
     case hdr

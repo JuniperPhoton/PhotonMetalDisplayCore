@@ -7,6 +7,9 @@
 import SwiftUI
 
 #if os(iOS) || os(tvOS)
+/// `UIViewRepresentable` wrapper on iOS and tvOS.
+///
+/// Don't use this protocol directly. Use ``MetalView`` instead.
 public protocol ViewRepresentable: UIViewRepresentable {
     associatedtype ViewType = UIViewType
     func makeView(context: Context) -> ViewType
@@ -23,6 +26,9 @@ extension ViewRepresentable {
     }
 }
 #elseif os(macOS)
+/// `NSViewRepresentable` wrapper on macOS.
+///
+/// Don't use this protocol directly. Use ``MetalView`` instead.
 public protocol ViewRepresentable: NSViewRepresentable {
     associatedtype ViewType = NSViewType
     func makeView(context: Context) -> ViewType

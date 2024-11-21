@@ -8,11 +8,34 @@ import SwiftUI
 import MetalKit
 
 /// MTKView wrapper for SwiftUI.
+///
+/// You construct this SwiftUI view using ``init(renderer:renderMode:isOpaque:prefersDynamicRange:)``,
+/// passing the renderer and some other configurations.
+///
+/// ```swift
+/// MetalView(
+///     renderer: renderer,
+///     renderMode: .renderWhenDirty,
+///     prefersDynamicRange: .hdr
+/// )
+/// ```
+///
+/// When it's time to render the `CIImage`, you call the ``MetalRenderer/requestChanged(displayedImage:)`` method.
+///
+/// > Note: This view responds to the `UIApplication` scene phase changes,
+/// when the app is not active, the underlying view to switch to SDR rendering mode.
+/// To prepare your content to not apply HDR effect when in HDR rendering mode, you should observe
+/// the event using ``HDRContentDisplayObserver``.
 public struct MetalView: ViewRepresentable {
     @ObservedObject public var renderer: MetalRenderer
     
+    /// Get the render mode set for the view.
     public let renderMode: MetalRenderMode
+    
+    /// Get whether the view is opaque.
     public let isOpaque: Bool
+    
+    /// Get the preferred dynamic range set for the view.
     public let prefersDynamicRange: MetalDynamicRange
     
     /// Construct the MetalView with the given renderer.
@@ -35,7 +58,6 @@ public struct MetalView: ViewRepresentable {
         self.prefersDynamicRange = prefersDynamicRange
     }
     
-    /// - Tag: MakeView
     public func makeView(context: Context) -> MTKView {
         let view = CustomMTKView(frame: .zero, device: renderer.device)
         view.prefersDynamicRange = prefersDynamicRange

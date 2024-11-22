@@ -36,5 +36,5 @@ Copy the *.doccarchive to the root dir and change its name to `docs` (Configure 
 ## Preview the documentation locally
 
 ```
-swift package --disable-sandbox preview-documentation --target PhotonMediaDisplayCore
+swift package --disable-sandbox preview-documentation --target PhotonMetalDisplayCore
 ```

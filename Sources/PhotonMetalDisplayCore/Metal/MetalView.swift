@@ -104,10 +104,10 @@ public struct MetalView: ViewRepresentable {
         configure(view: view, using: renderer)
         view.setNeedsDisplay(view.bounds)
         
-        if let CustomMTKView = view as? CustomMTKView {
-            CustomMTKView.prefersDynamicRange = prefersDynamicRange
+        if let customMTKView = view as? CustomMTKView {
+            customMTKView.prefersDynamicRange = prefersDynamicRange
             if #available(iOS 16.0, *) {
-                CustomMTKView.setupLayerDynamicRange()
+                customMTKView.setupLayerDynamicRange()
             }
         }
     }

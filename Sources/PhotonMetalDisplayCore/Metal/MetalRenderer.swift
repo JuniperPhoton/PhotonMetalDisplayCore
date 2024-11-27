@@ -70,6 +70,22 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         self.scaleToFill = scaleToFill
     }
     
+    /// Initialize the CIContext with some options.
+    /// - parameter options: The options to create the CIContext.
+    /// - parameter queue: A dedicated queue to start the render task. Although the whole render process is run by GPU,
+    /// however creating and submitting textures to GPU will introduce performance overhead, and it's recommended not to do it on main thread.
+    @_spi(Internal)
+    public func initializeCIContext(
+        options: [CIContextOption : Any]? = nil,
+        queue: DispatchQueue? = DispatchQueue(label: "metal_render_queue", qos: .userInitiated)
+    ) {
+        self.queue = queue
+        self.ciContext = CIContext(
+            mtlCommandQueue: self.commandQueue,
+            options: options
+        )
+    }
+    
     /// Initialize the CIContext with a specified working `CGColorSpace`.
     /// - parameter colorSpace: The working Color Space to use.
     /// - parameter name: The name of the CIContext. This is used for debugging purposes.

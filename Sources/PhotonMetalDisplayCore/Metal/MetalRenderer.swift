@@ -35,8 +35,12 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     
     let device: MTLDevice
     
-    private let commandQueue: MTLCommandQueue
+    /// The options used to create the CIContext.
+    /// You can use this to retrieve information like the working color space.
+    public private(set) var ciContextOptions: [CIContextOption: Any]? = nil
+    
     private var ciContext: CIContext? = nil
+    private let commandQueue: MTLCommandQueue
     private var opaqueBackground: CIImage
     
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
@@ -84,6 +88,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
             mtlCommandQueue: self.commandQueue,
             options: options
         )
+        self.ciContextOptions = options
     }
     
     /// Initialize the CIContext with a specified working `CGColorSpace`.
@@ -118,6 +123,8 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
             mtlCommandQueue: self.commandQueue,
             options: options
         )
+        
+        self.ciContextOptions = options
         
         print("MetalRenderer initializeCIContext \(CFAbsoluteTimeGetCurrent() - start)s, name: \(name) to color space: \(String(describing: colorSpace))")
     }

@@ -172,7 +172,7 @@ private class CustomMTKView: MTKView {
                 self.colorPixelFormat = MTLPixelFormat.rgba16Float
             case .sdr:
                 layer.wantsExtendedDynamicRangeContent = false
-                layer.colorspace = CGColorSpace(name: CGColorSpace.displayP3)
+                layer.colorspace = nil
                 self.colorPixelFormat = MTLPixelFormat.rgba8Unorm
                 break
             }

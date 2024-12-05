@@ -41,7 +41,11 @@ public class HDRContentDisplayObserver {
     
     /// The current maximum dynamic range supported currently.
     public var maximumDynamicRange: MetalDynamicRange {
-        maximumDynamicRangeInternal == .hdr && !lowPowerModeObserver.isLowPowerModeEnabled ? .hdr : .sdr
+#if os(iOS)
+        return maximumDynamicRangeInternal == .hdr && !lowPowerModeObserver.isLowPowerModeEnabled ? .hdr : .sdr
+#else
+        return .hdr
+#endif
     }
     
 #if os(iOS)

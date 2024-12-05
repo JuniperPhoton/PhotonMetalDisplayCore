@@ -5,6 +5,7 @@
 //  Created by JuniperPhoton on 2024/11/21.
 //
 import Foundation
+import Combine
 
 #if canImport(UIKit)
 import UIKit
@@ -12,7 +13,7 @@ import UIKit
 
 /// An observer to detech whether to disable HDR display or not in iOS.
 ///
-/// When the app is in inactive or in background, the observer will change the maximum dynamic range to SDR.
+/// When the app is in inactive, in background or in low-power mode, the observer will change the maximum dynamic range to SDR.
 ///
 /// You can either observe in the closure passed in the initializer or by checking the `maximumDynamicRange` property.
 ///
@@ -28,6 +29,9 @@ import UIKit
 /// }
 /// ```
 /// To get the current maximum dynamic range, you can access the ``maximumDynamicRange`` property.
+/// 
+/// > Note: This class also consider the low-power status internally.
+/// To detect whether the current device is in low-power mode, use ``LowPowerModeDetector``.
 ///
 /// > Note: On macOS, this class won’t perform any actions because its lifecycle differs from iOS.
 public class HDRContentDisplayObserver {
@@ -35,6 +39,11 @@ public class HDRContentDisplayObserver {
     
     /// The current maximum dynamic range supported currently.
     public private(set) var maximumDynamicRange: MetalDynamicRange = .hdr
+    
+#if os(iOS)
+    private let lowPowerModeObserver = LowPowerModeObserver()
+    private var lowPowerModeCancellable: Cancellable? = nil
+#endif
     
     /// Initialize the observer with the given closure.
     ///
@@ -44,6 +53,15 @@ public class HDRContentDisplayObserver {
         self.displayModeChanged = displayModeChanged
 #if canImport(UIKit)
         setupObserver()
+#endif
+        
+#if os(iOS)
+        lowPowerModeCancellable = lowPowerModeObserver.$isLowPowerModeEnabled
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLowPowerModeEnabled in
+                guard let self else { return }
+                publishChanges()
+            }
 #endif
     }
     
@@ -70,12 +88,16 @@ public class HDRContentDisplayObserver {
     
     @objc private func didResignActive() {
         maximumDynamicRange = .sdr
-        displayModeChanged(maximumDynamicRange)
+        publishChanges()
     }
     
     @objc private func didBecomeActive() {
         maximumDynamicRange = .hdr
-        displayModeChanged(maximumDynamicRange)
+        publishChanges()
+    }
+    
+    private func publishChanges() {
+        displayModeChanged(maximumDynamicRange == .hdr && !lowPowerModeObserver.isLowPowerModeEnabled ? .hdr : .sdr)
     }
 #endif
 }

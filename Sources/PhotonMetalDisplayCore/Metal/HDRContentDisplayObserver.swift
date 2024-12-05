@@ -37,8 +37,12 @@ import UIKit
 public class HDRContentDisplayObserver {
     private var displayModeChanged: (MetalDynamicRange) -> Void
     
+    private var maximumDynamicRangeInternal: MetalDynamicRange = .hdr
+    
     /// The current maximum dynamic range supported currently.
-    public private(set) var maximumDynamicRange: MetalDynamicRange = .hdr
+    public var maximumDynamicRange: MetalDynamicRange {
+        maximumDynamicRangeInternal == .hdr && !lowPowerModeObserver.isLowPowerModeEnabled ? .hdr : .sdr
+    }
     
 #if os(iOS)
     private let lowPowerModeObserver = LowPowerModeObserver()
@@ -87,17 +91,17 @@ public class HDRContentDisplayObserver {
     }
     
     @objc private func didResignActive() {
-        maximumDynamicRange = .sdr
+        maximumDynamicRangeInternal = .sdr
         publishChanges()
     }
     
     @objc private func didBecomeActive() {
-        maximumDynamicRange = .hdr
+        maximumDynamicRangeInternal = .hdr
         publishChanges()
     }
     
     private func publishChanges() {
-        displayModeChanged(maximumDynamicRange == .hdr && !lowPowerModeObserver.isLowPowerModeEnabled ? .hdr : .sdr)
+        displayModeChanged(maximumDynamicRange)
     }
 #endif
 }

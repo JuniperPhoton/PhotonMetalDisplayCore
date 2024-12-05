@@ -46,7 +46,9 @@ public class LowPowerModeObserver: ObservableObject {
     
     @objc func powerStateChanged(_ notification: Notification) {
         let lowerPowerEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
-        self.isLowPowerModeEnabled = lowerPowerEnabled
+        DispatchQueue.main.async {
+            self.isLowPowerModeEnabled = lowerPowerEnabled
+        }
     }
 }
 #endif

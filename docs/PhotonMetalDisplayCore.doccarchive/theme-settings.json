@@ -1,0 +1,39 @@
+{
+    "theme": {
+        "color": {
+            "link": {
+                "light": "#983592",
+                "dark": "#bcd3ff"
+            },
+            "documentation-intro-fill": {
+                "light": "linear-gradient(30deg, #DAE4FF, #FECECF)",
+                "dark": "linear-gradient(30deg, #526084, #FECECF)"
+            },
+            "aside-note-background": {
+                "light": "#f0f0ff",
+                "dark": "#000000"
+            },
+            "aside-note-border": "#696999",
+            "button-background": {
+                "light": "#4747a9",
+                "dark": "#4747a9"
+            }
+        },
+        "aside": {
+            "border-radius": "12px",
+            "border-style": "solid",
+            "border-width": "2px"
+        },
+        "border-radius": "12px",
+        "button": {
+            "border-radius": "16px",
+            "border-style": "solid",
+            "border-width": "0"
+        },
+        "code": {
+            "border-radius": "12px",
+            "border-style": "solid",
+            "border-width": "2px"
+        }
+    }
+}

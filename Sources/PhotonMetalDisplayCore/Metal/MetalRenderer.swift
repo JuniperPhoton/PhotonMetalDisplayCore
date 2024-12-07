@@ -34,6 +34,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     @Published private(set) var requestedDisplayedTime = CFAbsoluteTimeGetCurrent()
     
     let device: MTLDevice
+    public private(set) var debugMode = false
     
     /// The options used to create the CIContext.
     /// You can use this to retrieve information like the working color space.
@@ -56,6 +57,27 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         self.commandQueue = self.device.makeCommandQueue()!
         self.opaqueBackground = CIImage.black
         super.init()
+    }
+    
+    /// Set the debug mode. By setting this true while in debug build,
+    /// additional information will be printed to the console.
+    ///
+    /// You can also inspect the `CIRenderInfo` in the following source code to see the render graph.
+    ///
+    /// ```swift
+    /// let info = try? task?.waitUntilCompleted()
+    /// print("Render task completed: \(String(describing: info))")
+    /// ```
+    ///
+    /// - parameter on: If the debug mode is on.
+    ///
+    /// > Note: This method does nothing in release build.
+    public func setDebugMode(_ on: Bool) {
+#if DEBUG
+        self.debugMode = on
+#else
+        self.debugMode = false
+#endif
     }
     
     /// The the background color to be composited over with.
@@ -245,12 +267,21 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
                     // Start a task that renders to the texture destination.
                     // To prevent showing clamped content outside of the image's extent, we just render the
                     // original extent from the image.
-                    _ = try? ciContext.startTask(
+                    let task = try? ciContext.startTask(
                         toRender: image,
                         from: iRect,
                         to: destination,
                         at: CGPoint(x: shiftX, y: shiftY)
                     )
+                    
+#if DEBUG
+                    if self.debugMode {
+                        commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                            let info = try? task?.waitUntilCompleted()
+                            print("Render task completed: \(String(describing: info))")
+                        }
+                    }
+#endif
                     
                     // Insert a command to present the drawable when the buffer has been scheduled for execution.
                     commandBuffer.present(drawable)

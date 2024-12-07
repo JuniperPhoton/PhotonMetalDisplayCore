@@ -202,7 +202,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
             // Core Image writes to in this frame.
             // Therefore, the CPU can overwrite the buffer contents without corrupting any rendering operations.
             let semaphore = self.inFlightSemaphore
-            commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+            commandBuffer.addCompletedHandler { _ in
                 semaphore.signal()
             }
             
@@ -281,7 +281,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
                     
 #if DEBUG
                     if self.debugMode {
-                        commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                        commandBuffer.addCompletedHandler { _ in
                             let info = try? task?.waitUntilCompleted()
                             print("Render task completed: \(String(describing: info))")
                         }

@@ -8,6 +8,10 @@ https://juniperphoton.github.io/PhotonMetalDisplayCore/documentation/photonmetal
 
 ## Generate the Swift DocC
 
+The simplest way is to run the "./docs.sh" script to generate the Swift DocC.
+
+More information: https://juniperphoton.substack.com/p/swift-docc-theming-and-distribution
+
 ### Using Swift DocC plugin:
 
 ```

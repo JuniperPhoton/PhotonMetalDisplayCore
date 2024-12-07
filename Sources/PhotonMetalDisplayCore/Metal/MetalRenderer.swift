@@ -33,7 +33,10 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     /// When rendering in ``MetalRenderMode/renderWhenDirty``, you can use this to decide when to update the image.
     @Published private(set) var requestedDisplayedTime = CFAbsoluteTimeGetCurrent()
     
+    /// The Metal device used to render the image.
     let device: MTLDevice
+    
+    /// Get whether the debug mode is on.
     public private(set) var debugMode = false
     
     /// The options used to create the CIContext.
@@ -63,6 +66,8 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     /// additional information will be printed to the console.
     ///
     /// You can also inspect the `CIRenderInfo` in the following source code to see the render graph.
+    ///
+    /// ![](debug-inspect.jpg)
     ///
     /// ```swift
     /// let info = try? task?.waitUntilCompleted()

@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JuniperPhoton/PhotonMetalDisplayCore",
       "state" : {
-        "branch" : "main",
-        "revision" : "286f31f70d98fbe55277c6a93c2d4d9523f5a48b"
+        "revision" : "d68f5ba92cb02e0ecd3061643425e7b652508aa7",
+        "version" : "1.0.11"
       }
     }
   ],

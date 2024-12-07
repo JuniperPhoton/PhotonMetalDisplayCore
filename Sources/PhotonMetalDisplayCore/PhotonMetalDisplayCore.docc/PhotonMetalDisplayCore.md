@@ -44,3 +44,4 @@ dependencies: [
 ### Observe HDR Content Display
 
 - ``HDRContentDisplayObserver``
+- ``LowPowerModeObserver``

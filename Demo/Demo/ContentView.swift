@@ -18,6 +18,7 @@ class ViewModel {
     
     init() {
         renderer.initializeCIContext(colorSpace: nil, name: "my_renderer")
+        renderer.setDebugMode(true)
     }
     
     @MainActor

@@ -167,8 +167,9 @@ private class CustomMTKView: MTKView {
         if let layer = self.layer as? CAMetalLayer {
             switch range {
             case .hdr:
-                // To support HDR display, setting wantsExtendedDynamicRangeContent is enough.
-                // Avoid setting the color space, which will be default to sRGB.
+                // To support HDR display, setting both `wantsExtendedDynamicRangeContent` and `colorPixelFormat` is enough.
+                // Internally it will check `wantsExtendedDynamicRangeContent` and `colorPixelFormat`
+                // to choose a proper color space, which can be inspected later when drawing.
                 layer.wantsExtendedDynamicRangeContent = true
                 self.colorPixelFormat = MTLPixelFormat.rgba16Float
             case .sdr:
@@ -198,4 +199,14 @@ private class CustomMTKView: MTKView {
         }
     }
 #endif
+}
+
+extension MTKView {
+    var layerColorSpace: CGColorSpace? {
+        if let layer = self.layer as? CAMetalLayer {
+            return layer.colorspace
+        } else {
+            return nil
+        }
+    }
 }

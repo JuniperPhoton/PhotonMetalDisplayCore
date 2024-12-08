@@ -130,8 +130,6 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     ) {
         self.queue = queue
         
-        let start = CFAbsoluteTimeGetCurrent()
-        
         // Set up the Core Image context's options:
         // - Name the context to make CI_PRINT_TREE debugging easier.
         // - Disable caching because the image differs every frame.
@@ -153,7 +151,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         
         self.ciContextOptions = options
         
-        print("MetalRenderer initializeCIContext \(CFAbsoluteTimeGetCurrent() - start)s, name: \(name) to color space: \(String(describing: colorSpace))")
+        LibLogger.default.log("MetalRenderer initializeCIContext name: \(name) with working color space: \(String(describing: colorSpace))")
     }
     
     /// Request update the image.
@@ -184,7 +182,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     /// Draw the content into the view's texture.
     private func drawInternal(_ view: MTKView) {
         guard let ciContext = self.ciContext else {
-            print("CIContext is nil!")
+            LibLogger.default.log("CIContext is nil!")
             return
         }
         
@@ -192,7 +190,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         guard var image = self.displayedImage else {
             return
         }
-        
+                
         _ = self.inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         if let commandBuffer = self.commandQueue.makeCommandBuffer() {
             
@@ -283,7 +281,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
                     if self.debugMode {
                         commandBuffer.addCompletedHandler { _ in
                             let info = try? task?.waitUntilCompleted()
-                            print("Render task completed: \(String(describing: info))")
+                            LibLogger.default.log("Render task completed: \(String(describing: info))")
                         }
                     }
 #endif

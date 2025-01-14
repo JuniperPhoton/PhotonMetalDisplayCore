@@ -43,7 +43,11 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     /// You can use this to retrieve information like the working color space.
     public private(set) var ciContextOptions: [CIContextOption: Any]? = nil
     
-    private var ciContext: CIContext? = nil
+    /// Get the CIContext used to render the image.
+    ///
+    /// You use the ``initializeCIContext(options:queue:)`` to initialize this CIContext.
+    public private(set) var ciContext: CIContext? = nil
+    
     private let commandQueue: MTLCommandQueue
     private var opaqueBackground: CIImage
     

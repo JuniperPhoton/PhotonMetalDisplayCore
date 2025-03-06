@@ -38,6 +38,9 @@ public struct MetalView: ViewRepresentable {
     /// Get the preferred dynamic range set for the view.
     public let prefersDynamicRange: MetalDynamicRange
     
+    /// The clear color for the view.
+    public let clearColor: MetalViewClearColor?
+    
     /// Construct the MetalView with the given renderer.
     ///
     /// - parameter renderer: The ``MetalRenderer`` to use for drawing.
@@ -45,6 +48,8 @@ public struct MetalView: ViewRepresentable {
     /// - parameter isOpaque: Whether the view is opaque. The default value is true.
     /// - parameter prefersDynamicRange: The preferred dynamic range for the view.
     /// The default value is ``MetalDynamicRange/sdr``.
+    /// - parameter clearColor: The clear color for the view. The default value is nil, clearing to Black.
+    /// Note: Setting this on macOS will not work currently.
     ///
     /// Note: this view can only response to the ``prefersDynamicRange`` changes.
     /// ``renderer``, ``renderMode`` and ``isOpaque`` must be confirmed when initializing this view.
@@ -52,12 +57,14 @@ public struct MetalView: ViewRepresentable {
         renderer: MetalRenderer,
         renderMode: MetalRenderMode,
         isOpaque: Bool = true,
-        prefersDynamicRange: MetalDynamicRange = .sdr
+        prefersDynamicRange: MetalDynamicRange = .sdr,
+        clearColor: MetalViewClearColor? = nil
     ) {
         self.renderer = renderer
         self.renderMode = renderMode
         self.isOpaque = isOpaque
         self.prefersDynamicRange = prefersDynamicRange
+        self.clearColor = clearColor
     }
     
     public func makeView(context: Context) -> MTKView {
@@ -103,6 +110,13 @@ public struct MetalView: ViewRepresentable {
     public func updateView(_ view: MTKView, context: Context) {
         configure(view: view, using: renderer)
         view.setNeedsDisplay(view.bounds)
+        
+        if let clearColor {
+#if canImport(UIKit)
+            view.clearColor = clearColor.mtlColor
+            view.backgroundColor = clearColor.platformColor
+#endif
+        }
         
         if let customMTKView = view as? CustomMTKView {
             customMTKView.prefersDynamicRange = prefersDynamicRange

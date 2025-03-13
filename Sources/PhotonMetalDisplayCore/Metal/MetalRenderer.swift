@@ -59,6 +59,9 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     
     private var clearDestination: Bool = false
     
+    /// The delegate to receive the render events.
+    public weak var eventDelegate: MetalRenderEventsDelegate? = nil
+    
     public override init() {
         self.device = MTLCreateSystemDefaultDevice()!
         self.commandQueue = self.device.makeCommandQueue()!
@@ -114,12 +117,14 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         options: [CIContextOption : Any]? = nil,
         queue: DispatchQueue? = DispatchQueue(label: "metal_render_queue", qos: .userInitiated)
     ) {
+        eventDelegate?.onStartInitializeCIContext()
         self.queue = queue
         self.ciContext = CIContext(
             mtlCommandQueue: self.commandQueue,
             options: options
         )
         self.ciContextOptions = options
+        eventDelegate?.onStopInitializeCIContext()
     }
     
     /// Initialize the CIContext with a specified working `CGColorSpace`.
@@ -132,6 +137,8 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         name: String,
         queue: DispatchQueue? = DispatchQueue(label: "metal_render_queue", qos: .userInitiated)
     ) {
+        eventDelegate?.onStartInitializeCIContext()
+
         self.queue = queue
         
         // Set up the Core Image context's options:
@@ -156,6 +163,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         self.ciContextOptions = options
         
         LibLogger.default.log("MetalRenderer initializeCIContext name: \(name) with working color space: \(String(describing: colorSpace))")
+        eventDelegate?.onStopInitializeCIContext()
     }
     
     /// Request update the image.
@@ -197,7 +205,6 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
                 
         _ = self.inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         if let commandBuffer = self.commandQueue.makeCommandBuffer() {
-            
             // Add a completion handler that signals `inFlightSemaphore` when Metal and the GPU have fully
             // finished processing the commands that the app encoded for this frame.
             // This completion indicates that Metal and the GPU no longer need the dynamic buffers that
@@ -206,6 +213,16 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
             let semaphore = self.inFlightSemaphore
             commandBuffer.addCompletedHandler { _ in
                 semaphore.signal()
+            }
+            
+            if let eventDelegate {
+                let startTime = CFAbsoluteTimeGetCurrent()
+                let id = String(startTime)
+                eventDelegate.onStartRender(id: id)
+                
+                commandBuffer.addCompletedHandler { [weak eventDelegate] _ in
+                    eventDelegate?.onEndRender(id: id)
+                }
             }
             
             if let drawable = view.currentDrawable {

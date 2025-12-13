@@ -110,9 +110,7 @@ public struct MetalView: ViewRepresentable {
             layer.isOpaque = isOpaque
         }
         
-        if #available(iOS 16.0, *) {
-            view.setupLayerDynamicRange(range: prefersDynamicRange)
-        }
+        view.setupLayerDynamicRange(range: prefersDynamicRange)
         
         return view
     }
@@ -129,9 +127,7 @@ public struct MetalView: ViewRepresentable {
         }
         
         view.prefersDynamicRange = prefersDynamicRange
-        if #available(iOS 16.0, *) {
-            view.setupLayerDynamicRange()
-        }
+        view.setupLayerDynamicRange()
     }
     
     private func configure(view: MTKView, using renderer: MetalRenderer) {
@@ -163,9 +159,7 @@ public class CustomMTKView: MTKView {
 #if canImport(UIKit)
         observer = HDRContentDisplayObserver(startMonitorTask: startMonitorTask) { [weak self] range in
             guard let self else { return }
-            if #available(iOS 16.0, *) {
-                setupLayerDynamicRange()
-            }
+            setupLayerDynamicRange()
         }
 #endif
     }
@@ -180,7 +174,6 @@ public class CustomMTKView: MTKView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @available(iOS 16.0, *)
     func setupLayerDynamicRange() {
 #if canImport(UIKit)
         switch observer.maximumDynamicRange {
@@ -194,7 +187,6 @@ public class CustomMTKView: MTKView {
 #endif
     }
     
-    @available(iOS 16.0, *)
     func setupLayerDynamicRange(range: MetalDynamicRange) {
         if let layer = self.layer as? CAMetalLayer {
             switch range {

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2231CF572CEE629900D3C093 /* PhotonMetalDisplayCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2231CF562CEE629900D3C093 /* PhotonMetalDisplayCore */; };
+		22C367462EED75F60017A9FB /* PhotonMetalDisplayCore in Frameworks */ = {isa = PBXBuildFile; productRef = 22C367452EED75F60017A9FB /* PhotonMetalDisplayCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2231CF572CEE629900D3C093 /* PhotonMetalDisplayCore in Frameworks */,
+				22C367462EED75F60017A9FB /* PhotonMetalDisplayCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 			);
 			name = Demo;
 			packageProductDependencies = (
-				2231CF562CEE629900D3C093 /* PhotonMetalDisplayCore */,
+				22C367452EED75F60017A9FB /* PhotonMetalDisplayCore */,
 			);
 			productName = Demo;
 			productReference = 2231CF272CEE627500D3C093 /* Demo.app */;
@@ -202,7 +202,7 @@
 			mainGroup = 2231CF1E2CEE627500D3C093;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2231CF552CEE629900D3C093 /* XCRemoteSwiftPackageReference "PhotonMetalDisplayCore" */,
+				22C367442EED75F60017A9FB /* XCLocalSwiftPackageReference "../../PhotonMetalDisplayCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2231CF282CEE627500D3C093 /* Products */;
@@ -601,21 +601,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		2231CF552CEE629900D3C093 /* XCRemoteSwiftPackageReference "PhotonMetalDisplayCore" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/JuniperPhoton/PhotonMetalDisplayCore";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.11;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		22C367442EED75F60017A9FB /* XCLocalSwiftPackageReference "../../PhotonMetalDisplayCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PhotonMetalDisplayCore;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2231CF562CEE629900D3C093 /* PhotonMetalDisplayCore */ = {
+		22C367452EED75F60017A9FB /* PhotonMetalDisplayCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2231CF552CEE629900D3C093 /* XCRemoteSwiftPackageReference "PhotonMetalDisplayCore" */;
 			productName = PhotonMetalDisplayCore;
 		};
 /* End XCSwiftPackageProductDependency section */

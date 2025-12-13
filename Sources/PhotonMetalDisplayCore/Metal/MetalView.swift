@@ -27,6 +27,10 @@ import MetalKit
 /// To prepare your content to not apply HDR effect when in HDR rendering mode, you should observe
 /// the event using ``HDRContentDisplayObserver``.
 public struct MetalView: ViewRepresentable {
+    public static func dismantleUIView(_ uiView: CustomMTKView, coordinator: ()) {
+        uiView.cancelObserve()
+    }
+    
     @ObservedObject public var renderer: MetalRenderer
     
     /// Get the render mode set for the view.
@@ -40,6 +44,8 @@ public struct MetalView: ViewRepresentable {
     
     /// The clear color for the view.
     public let clearColor: MetalViewClearColor?
+    
+    public let startMonitorTask: Bool
     
     /// Construct the MetalView with the given renderer.
     ///
@@ -58,18 +64,21 @@ public struct MetalView: ViewRepresentable {
         renderMode: MetalRenderMode,
         isOpaque: Bool = true,
         prefersDynamicRange: MetalDynamicRange = .sdr,
-        clearColor: MetalViewClearColor? = nil
+        clearColor: MetalViewClearColor? = nil,
+        startMonitorTask: Bool = false
     ) {
         self.renderer = renderer
         self.renderMode = renderMode
         self.isOpaque = isOpaque
         self.prefersDynamicRange = prefersDynamicRange
         self.clearColor = clearColor
+        self.startMonitorTask = startMonitorTask
     }
     
-    public func makeView(context: Context) -> MTKView {
+    public func makeView(context: Context) -> CustomMTKView {
         let view = CustomMTKView(frame: .zero, device: renderer.device)
         view.prefersDynamicRange = prefersDynamicRange
+        view.startMonitorTask = startMonitorTask
         view.onBoundsChanged = { [weak view] bounds in
             guard let view else { return }
             
@@ -80,6 +89,7 @@ public struct MetalView: ViewRepresentable {
                 break
             }
         }
+        view.setupObserver()
         
         switch renderMode {
         case .continuous(let fps):
@@ -107,7 +117,7 @@ public struct MetalView: ViewRepresentable {
         return view
     }
     
-    public func updateView(_ view: MTKView, context: Context) {
+    public func updateView(_ view: CustomMTKView, context: Context) {
         configure(view: view, using: renderer)
         view.setNeedsDisplay(view.bounds)
         
@@ -118,11 +128,9 @@ public struct MetalView: ViewRepresentable {
 #endif
         }
         
-        if let customMTKView = view as? CustomMTKView {
-            customMTKView.prefersDynamicRange = prefersDynamicRange
-            if #available(iOS 16.0, *) {
-                customMTKView.setupLayerDynamicRange()
-            }
+        view.prefersDynamicRange = prefersDynamicRange
+        if #available(iOS 16.0, *) {
+            view.setupLayerDynamicRange()
         }
     }
     
@@ -132,12 +140,14 @@ public struct MetalView: ViewRepresentable {
 }
 
 /// A MetalKit view that can detect bounds changes and can disable HDR display in some conditions.
-private class CustomMTKView: MTKView {
+public class CustomMTKView: MTKView {
     /// The closure to call when the bounds change.
     var onBoundsChanged: ((CGRect) -> Void)? = nil
     
     /// The preferred dynamic range for the view.
     var prefersDynamicRange: MetalDynamicRange = .sdr
+    
+    var startMonitorTask: Bool = false
     
 #if canImport(UIKit)
     private var observer: HDRContentDisplayObserver!
@@ -147,14 +157,22 @@ private class CustomMTKView: MTKView {
     
     override init(frame frameRect: CGRect, device: (any MTLDevice)?) {
         super.init(frame: frameRect, device: device)
-        
+    }
+    
+    func setupObserver() {
 #if canImport(UIKit)
-        observer = HDRContentDisplayObserver { [weak self] range in
+        observer = HDRContentDisplayObserver(startMonitorTask: startMonitorTask) { [weak self] range in
             guard let self else { return }
             if #available(iOS 16.0, *) {
                 setupLayerDynamicRange()
             }
         }
+#endif
+    }
+    
+    func cancelObserve() {
+#if canImport(UIKit)
+        observer.cancelObserve()
 #endif
     }
     
@@ -195,7 +213,7 @@ private class CustomMTKView: MTKView {
     }
     
 #if canImport(UIKit)
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         
         if self.currentBounds != self.bounds {

@@ -55,15 +55,11 @@ struct ContentView: View {
                     renderer: viewModel.renderer,
                     renderMode: .renderWhenDirty,
                     isOpaque: false,
-                    prefersDynamicRange: viewModel.showHDR ? .hdr : .sdr
+                    prefersDynamicRange: viewModel.showHDR ? .hdr : .sdr,
+                    startMonitorTask: true
                 )
             }.toolbar {
                 Toggle("Show HDR", isOn: $viewModel.showHDR)
-#if os(macOS)
-                    .toggleStyle(.checkbox)
-#else
-                    .toggleStyle(.switch)
-#endif
             }.task(id: viewModel.showHDR) {
                 await viewModel.loadBuiltInImage()
             }

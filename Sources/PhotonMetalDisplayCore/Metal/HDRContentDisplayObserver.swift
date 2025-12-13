@@ -29,7 +29,7 @@ import UIKit
 /// }
 /// ```
 /// To get the current maximum dynamic range, you can access the ``maximumDynamicRange`` property.
-/// 
+///
 /// > Note: This class also consider the low-power status internally.
 /// To detect whether the current device is in low-power mode, use ``LowPowerModeDetector``.
 ///
@@ -39,28 +39,42 @@ public class HDRContentDisplayObserver {
     
     private var maximumDynamicRangeInternal: MetalDynamicRange = .hdr
     
+    /// Whether the current EDR headroom is SDR, reported by the system.
+    /// Under some circustances, such as bright outdoor condition,
+    /// the system will set `currentEDRHeadroom` to 1.0 and will clip HDR rendering.
+    public private(set) var isCurrentEDRHeadroomSDR = false
+    
     /// The current maximum dynamic range supported currently.
     public var maximumDynamicRange: MetalDynamicRange {
-#if os(iOS)
-        return maximumDynamicRangeInternal == .hdr && !lowPowerModeObserver.isLowPowerModeEnabled ? .hdr : .sdr
+#if canImport(UIKit)
+        let supportHDR = maximumDynamicRangeInternal == .hdr &&
+        !lowPowerModeObserver.isLowPowerModeEnabled &&
+        !isCurrentEDRHeadroomSDR
+        
+        return supportHDR ? .hdr : .sdr
 #else
         return .hdr
 #endif
     }
     
-#if os(iOS)
+#if canImport(UIKit)
+    private var edrMonitorTask: Task<Void, Error>? = nil
     private let lowPowerModeObserver = LowPowerModeObserver()
     private var lowPowerModeCancellable: Cancellable? = nil
 #endif
     
     /// Initialize the observer with the given closure.
     ///
+    /// - parameter startMonitorTask: Start a timer to detect change of `currentEDRHeadroom`.
+    /// Under the sun the device may encounter an issue where the system will refuse to render HDR and
+    /// `currentEDRHeadroom` will be set to 1.0. However, there's no way to monitor the change of`currentEDRHeadroom`,
+    /// so we will start a timer here.
     /// - parameter displayModeChanged: The closure to call when the display mode changes.
     /// The parameter indicates the supported maximum dynamic range.
-    public init(displayModeChanged: @escaping (MetalDynamicRange) -> Void) {
+    public init(startMonitorTask: Bool, displayModeChanged: @escaping (MetalDynamicRange) -> Void) {
         self.displayModeChanged = displayModeChanged
 #if canImport(UIKit)
-        setupObserver()
+        setupObserver(startMonitorTask: startMonitorTask)
 #endif
         
 #if os(iOS)
@@ -75,10 +89,16 @@ public class HDRContentDisplayObserver {
     
 #if canImport(UIKit)
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        cancelObserve()
     }
     
-    private func setupObserver() {
+    public func cancelObserve() {
+        NotificationCenter.default.removeObserver(self)
+        edrMonitorTask?.cancel()
+        edrMonitorTask = nil
+    }
+    
+    private func setupObserver(startMonitorTask: Bool) {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didResignActive),
@@ -92,6 +112,18 @@ public class HDRContentDisplayObserver {
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
+        
+        if startMonitorTask {
+            edrMonitorTask = Task { @MainActor [weak self] in
+                guard let self else { return }
+                
+                while(true) {
+                    try await Task.sleep(for: .seconds(2))
+                    isCurrentEDRHeadroomSDR = UIScreen.main.currentEDRHeadroom <= 1.0
+                    publishChanges()
+                }
+            }
+        }
     }
     
     @objc private func didResignActive() {

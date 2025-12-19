@@ -77,7 +77,7 @@ public class HDRContentDisplayObserver {
         setupObserver(startMonitorTask: startMonitorTask)
 #endif
         
-#if os(iOS)
+#if canImport(UIKit)
         lowPowerModeCancellable = lowPowerModeObserver.$isLowPowerModeEnabled
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLowPowerModeEnabled in
@@ -87,17 +87,20 @@ public class HDRContentDisplayObserver {
 #endif
     }
     
-#if canImport(UIKit)
+
     deinit {
         cancelObserve()
     }
     
     public func cancelObserve() {
+#if canImport(UIKit)
         NotificationCenter.default.removeObserver(self)
         edrMonitorTask?.cancel()
         edrMonitorTask = nil
+#endif
     }
     
+#if canImport(UIKit)
     private func setupObserver(startMonitorTask: Bool) {
         NotificationCenter.default.addObserver(
             self,

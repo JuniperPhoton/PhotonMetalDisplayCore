@@ -35,6 +35,12 @@ import UIKit
 ///
 /// > Note: On macOS, this class won’t perform any actions because its lifecycle differs from iOS.
 public class HDRContentDisplayObserver {
+    public enum StartMonitorConfig {
+        case none
+        case `default`
+        case custom(duration: Duration)
+    }
+    
     private var displayModeChanged: (MetalDynamicRange) -> Void
     
     private var maximumDynamicRangeInternal: MetalDynamicRange = .hdr
@@ -65,16 +71,16 @@ public class HDRContentDisplayObserver {
     
     /// Initialize the observer with the given closure.
     ///
-    /// - parameter startMonitorTask: Start a timer to detect change of `currentEDRHeadroom`.
+    /// - parameter startMonitorConfig: Start a timer to detect change of `currentEDRHeadroom`.
     /// Under the sun the device may encounter an issue where the system will refuse to render HDR and
     /// `currentEDRHeadroom` will be set to 1.0. However, there's no way to monitor the change of`currentEDRHeadroom`,
     /// so we will start a timer here.
     /// - parameter displayModeChanged: The closure to call when the display mode changes.
     /// The parameter indicates the supported maximum dynamic range.
-    public init(startMonitorTask: Bool, displayModeChanged: @escaping (MetalDynamicRange) -> Void) {
+    public init(startMonitorConfig: StartMonitorConfig, displayModeChanged: @escaping (MetalDynamicRange) -> Void) {
         self.displayModeChanged = displayModeChanged
 #if canImport(UIKit)
-        setupObserver(startMonitorTask: startMonitorTask)
+        setupObserver(startMonitorConfig: startMonitorConfig)
 #endif
         
 #if canImport(UIKit)
@@ -86,7 +92,6 @@ public class HDRContentDisplayObserver {
             }
 #endif
     }
-    
 
     deinit {
         cancelObserve()
@@ -101,7 +106,7 @@ public class HDRContentDisplayObserver {
     }
     
 #if canImport(UIKit)
-    private func setupObserver(startMonitorTask: Bool) {
+    private func setupObserver(startMonitorConfig: StartMonitorConfig) {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didResignActive),
@@ -116,13 +121,29 @@ public class HDRContentDisplayObserver {
             object: nil
         )
         
-        if startMonitorTask {
-            edrMonitorTask = Task { @MainActor [weak self] in
-                guard let self else { return }
-                
-                while(true) {
-                    try await Task.sleep(for: .seconds(1))
-                    isCurrentEDRHeadroomSDR = UIScreen.main.currentEDRHeadroom <= 1.0
+        switch startMonitorConfig {
+        case .default:
+            startMonitorTask(interval: .seconds(1))
+        case .custom(let duration):
+            startMonitorTask(interval: duration)
+        default:
+            break
+        }
+    }
+    
+    private func startMonitorTask(interval: Duration) {
+        edrMonitorTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            
+            isCurrentEDRHeadroomSDR = UIScreen.main.currentEDRHeadroom <= 1.0
+            publishChanges()
+            
+            while(true) {
+                try await Task.sleep(for: interval)
+                let prevIsCurrentEDRHeadroomSDR = isCurrentEDRHeadroomSDR
+                let newIsCurrentEDRHeadroomSDR = UIScreen.main.currentEDRHeadroom <= 1.0
+                if prevIsCurrentEDRHeadroomSDR != newIsCurrentEDRHeadroomSDR {
+                    isCurrentEDRHeadroomSDR = newIsCurrentEDRHeadroomSDR
                     publishChanges()
                 }
             }

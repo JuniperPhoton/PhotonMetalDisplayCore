@@ -157,7 +157,7 @@ public class CustomMTKView: MTKView {
     
     func setupObserver() {
 #if canImport(UIKit)
-        observer = HDRContentDisplayObserver(startMonitorTask: startMonitorTask) { [weak self] range in
+        observer = HDRContentDisplayObserver(startMonitorConfig: .default) { [weak self] range in
             guard let self else { return }
             setupLayerDynamicRange()
         }

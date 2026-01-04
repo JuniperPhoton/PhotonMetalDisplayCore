@@ -42,7 +42,8 @@ public class HDRContentDisplayObserver {
     }
     
     private var displayModeChanged: (MetalDynamicRange) -> Void
-    
+    private let startMonitorConfig: StartMonitorConfig
+
     private var maximumDynamicRangeInternal: MetalDynamicRange = .hdr
     
     /// Whether the current EDR headroom is SDR, reported by the system.
@@ -79,8 +80,9 @@ public class HDRContentDisplayObserver {
     /// The parameter indicates the supported maximum dynamic range.
     public init(startMonitorConfig: StartMonitorConfig, displayModeChanged: @escaping (MetalDynamicRange) -> Void) {
         self.displayModeChanged = displayModeChanged
+        self.startMonitorConfig = startMonitorConfig
 #if canImport(UIKit)
-        setupObserver(startMonitorConfig: startMonitorConfig)
+        setupObserver()
 #endif
         
 #if canImport(UIKit)
@@ -100,13 +102,19 @@ public class HDRContentDisplayObserver {
     public func cancelObserve() {
 #if canImport(UIKit)
         NotificationCenter.default.removeObserver(self)
-        edrMonitorTask?.cancel()
-        edrMonitorTask = nil
+        stopMonitorTask()
+#endif
+    }
+    
+    public func invalidateMonitor() {
+#if canImport(UIKit)
+        isCurrentEDRHeadroomSDR = false
+        startMonitorTask()
 #endif
     }
     
 #if canImport(UIKit)
-    private func setupObserver(startMonitorConfig: StartMonitorConfig) {
+    private func setupObserver() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didResignActive),
@@ -121,6 +129,17 @@ public class HDRContentDisplayObserver {
             object: nil
         )
         
+        startMonitorTask()
+    }
+    
+    private func stopMonitorTask() {
+        edrMonitorTask?.cancel()
+        edrMonitorTask = nil
+    }
+    
+    private func startMonitorTask() {
+        stopMonitorTask()
+        
         switch startMonitorConfig {
         case .default:
             startMonitorTask(interval: .seconds(1))
@@ -134,9 +153,6 @@ public class HDRContentDisplayObserver {
     private func startMonitorTask(interval: Duration) {
         edrMonitorTask = Task { @MainActor [weak self] in
             guard let self else { return }
-            
-            isCurrentEDRHeadroomSDR = UIScreen.main.currentEDRHeadroom <= 1.0
-            publishChanges()
             
             while(true) {
                 try await Task.sleep(for: interval)

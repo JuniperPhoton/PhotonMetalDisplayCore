@@ -213,8 +213,8 @@ public class CustomMTKView: MTKView {
             onBoundsChanged?(self.currentBounds)
         }
     }
-#else
-    override func layout() {
+#elseif canImport(AppKit)
+    public override func layout() {
         super.layout()
         
         if self.currentBounds != self.bounds {

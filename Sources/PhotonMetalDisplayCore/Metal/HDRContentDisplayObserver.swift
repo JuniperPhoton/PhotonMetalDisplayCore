@@ -108,8 +108,13 @@ public class HDRContentDisplayObserver {
     
     public func invalidateMonitor() {
 #if canImport(UIKit)
-        isCurrentEDRHeadroomSDR = false
-        startMonitorTask()
+        switch startMonitorConfig {
+        case .none:
+            break
+        default:
+            isCurrentEDRHeadroomSDR = false
+            startMonitorTask()
+        }
 #endif
     }
     

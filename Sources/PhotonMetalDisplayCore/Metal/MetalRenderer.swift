@@ -34,7 +34,7 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     @Published private(set) var requestedDisplayedTime = CFAbsoluteTimeGetCurrent()
     
     /// The Metal device used to render the image.
-    let device: MTLDevice
+    public let device: MTLDevice
     
     /// Get whether the debug mode is on.
     public private(set) var debugMode = false

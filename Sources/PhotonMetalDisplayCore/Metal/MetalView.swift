@@ -151,7 +151,7 @@ public class CustomMTKView: MTKView {
     
     private var currentBounds: CGRect = .zero
     
-    override init(frame frameRect: CGRect, device: (any MTLDevice)?) {
+    public override init(frame frameRect: CGRect, device: (any MTLDevice)?) {
         super.init(frame: frameRect, device: device)
     }
     

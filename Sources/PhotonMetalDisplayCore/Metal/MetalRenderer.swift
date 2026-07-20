@@ -135,7 +135,9 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
     public func initializeCIContext(
         colorSpace: CGColorSpace?,
         name: String,
-        queue: DispatchQueue? = DispatchQueue(label: "metal_render_queue", qos: .userInitiated)
+        queue: DispatchQueue? = DispatchQueue(label: "metal_render_queue", qos: .userInitiated),
+        cacheIntermediates: Bool = true,
+        allowLowPower: Bool = false
     ) {
         eventDelegate?.onStartInitializeCIContext()
 
@@ -148,8 +150,8 @@ public final class MetalRenderer: NSObject, MTKViewDelegate, ObservableObject {
         var options = [CIContextOption: Any]()
         options = [
             .name: name,
-            .cacheIntermediates: false,
-            .allowLowPower: true,
+            .cacheIntermediates: cacheIntermediates,
+            .allowLowPower: allowLowPower,
         ]
         if let colorSpace = colorSpace {
             options[.workingColorSpace] = colorSpace

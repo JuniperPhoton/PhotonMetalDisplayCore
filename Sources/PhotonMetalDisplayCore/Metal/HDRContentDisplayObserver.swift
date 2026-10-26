@@ -162,7 +162,7 @@ public class HDRContentDisplayObserver {
             while(true) {
                 try await Task.sleep(for: interval)
                 let prevIsCurrentEDRHeadroomSDR = isCurrentEDRHeadroomSDR
-                let newIsCurrentEDRHeadroomSDR = UIScreen.main.currentEDRHeadroom <= 1.0
+                let newIsCurrentEDRHeadroomSDR = UIScreen.active.currentEDRHeadroom <= 1.0
                 if prevIsCurrentEDRHeadroomSDR != newIsCurrentEDRHeadroomSDR {
                     isCurrentEDRHeadroomSDR = newIsCurrentEDRHeadroomSDR
                     publishChanges()
